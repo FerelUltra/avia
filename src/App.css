@@ -1,0 +1,16 @@
+.App {
+  text-align: center;
+  padding: 20px;
+}
+.tabs{
+  display: flex;
+  justify-content: center;
+}
+*{
+  margin: 0;
+  padding: 0;
+}
+p{
+  margin: 0;
+  padding: 0;
+}
