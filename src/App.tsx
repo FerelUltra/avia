@@ -10,26 +10,20 @@ import {CheckboxValueType} from 'antd/lib/checkbox/Group';
 import Checkbox, {CheckboxChangeEvent} from 'antd/lib/checkbox';
 import {Transfers} from "./components/Transfers";
 import {Options} from "./components/Options";
-
-const CheckboxGroup = Checkbox.Group;
-const plainOptions = ['Без пересадок', '1 пересадка', '2 пересадки', '3 пересадки'];
-const defaultCheckedList = ['Apple', 'Orange'];
+import {useDispatch, useSelector} from "react-redux";
+import {CounterState, fetchTickets, fetchTicketsId} from "./store/reducers/counterReducer";
+import {RootState} from "./store/store";
 
 function App() {
-    const [checkedList, setCheckedList] = useState<CheckboxValueType[]>(defaultCheckedList);
-    const [indeterminate, setIndeterminate] = useState(true);
     const [checkAll, setCheckAll] = useState(false);
-    const onChange = (list: CheckboxValueType[]) => {
-        setCheckedList(list);
-        setIndeterminate(!!list.length && list.length < plainOptions.length);
-        setCheckAll(list.length === plainOptions.length);
-    };
-
-    const onCheckAllChange = (e: CheckboxChangeEvent) => {
-        setCheckedList(e.target.checked ? plainOptions : []);
-        setIndeterminate(false);
-        setCheckAll(e.target.checked);
-    };
+    const {ticketId, tickets, option, without, one, two, three, all} = useSelector((state: RootState) => state.counter)
+    const dispatch = useDispatch()
+    useEffect(() => {
+        dispatch(fetchTicketsId())
+    }, [])
+    useEffect(() => {
+        dispatch(fetchTickets(ticketId.searchId))
+    }, [ticketId])
     return (
 
         <div className="App">
@@ -38,7 +32,65 @@ function App() {
                 <Transfers/>
                 <div style={{marginLeft: "20px"}}>
                     <Options/>
-                    <Ticket/>
+                    {tickets.length ? tickets.slice().filter((el) => {
+                        const stops = el.segments[0].stops.length
+                        if(all){
+                            return true
+                        }
+                        if (without && one && two){
+                            return stops === 0 || stops === 1 || stops === 2
+                        }
+                        if (without && one && three){
+                            return stops === 0 || stops === 1 || stops === 3
+                        }
+                        if (without && two && three){
+                            return stops === 0 || stops === 2 || stops === 3
+                        }
+                        if (one && two && three){
+                            return stops === 1 || stops === 2 || stops === 3
+                        }
+                        if(without && one){
+                            return stops === 0 || stops === 1
+                        }
+                        if(without && two){
+                            return stops === 0 || stops === 2
+                        }
+                        if(without && three){
+                            return stops === 0 || stops === 3
+                        }
+                        if(one && two){
+                            return stops === 1 || stops === 2
+                        }
+                        if(one && three){
+                            return stops === 1 || stops === 3
+                        }
+                        if(two && three){
+                            return stops === 2 || stops === 3
+                        }
+                        if(without) {
+                            return stops === 0
+                        }
+                        if(one) {
+                            return stops === 1
+                        }
+                        if(two) {
+                            return stops === 2
+                        }
+                        if(three) {
+                            return stops === 3
+                        }
+                    }).sort(function (a, b) {
+                        if (option === 'cheap') {
+                            return a.price - b.price
+                        }
+                        if (option === 'fast') {
+                            return a.segments[0].duration - b.segments[0].duration
+                        }
+                    }).map(({price, carrier, segments}) => <Ticket price={price}
+                                                                   carrier={carrier}
+                                                                   segments={segments}
+                                                                   key={price + carrier}
+                    />) : <div>...Loading</div>}
                 </div>
             </div>
 

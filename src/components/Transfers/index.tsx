@@ -6,7 +6,6 @@ import { isChecked } from '../../store/reducers/counterReducer';
 export const Transfers = (props: any) => {
     const checkboxes = useSelector((state: RootState)=> state.counter)
     const dispatch = useDispatch()
-    console.log(checkboxes)
     return (
         <div className={styles.transfers}>
             <p>КОЛИЧЕСТВО ПЕРЕСАДОК</p>
