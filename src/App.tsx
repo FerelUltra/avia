@@ -13,17 +13,31 @@ import {Options} from "./components/Options";
 import {useDispatch, useSelector} from "react-redux";
 import {CounterState, fetchTickets, fetchTicketsId} from "./store/reducers/counterReducer";
 import {RootState} from "./store/store";
+import {v4 as uuidv4} from "uuid"
 
 function App() {
     const [checkAll, setCheckAll] = useState(false);
-    const {ticketId, tickets, option, without, one, two, three, all} = useSelector((state: RootState) => state.counter)
+    const {
+        ticketId,
+        stop,
+        count,
+        tickets,
+        option,
+        without,
+        one,
+        two,
+        three,
+        all
+    } = useSelector((state: RootState) => state.counter)
     const dispatch = useDispatch()
     useEffect(() => {
         dispatch(fetchTicketsId())
     }, [])
     useEffect(() => {
         dispatch(fetchTickets(ticketId.searchId))
-    }, [ticketId])
+        console.log(ticketId, 'ticketId')
+        console.log(tickets)
+    }, [ticketId, tickets])
     return (
 
         <div className="App">
@@ -34,49 +48,49 @@ function App() {
                     <Options/>
                     {tickets.length ? tickets.slice().filter((el) => {
                         const stops = el.segments[0].stops.length
-                        if(all){
+                        if (all) {
                             return true
                         }
-                        if (without && one && two){
+                        if (without && one && two) {
                             return stops === 0 || stops === 1 || stops === 2
                         }
-                        if (without && one && three){
+                        if (without && one && three) {
                             return stops === 0 || stops === 1 || stops === 3
                         }
-                        if (without && two && three){
+                        if (without && two && three) {
                             return stops === 0 || stops === 2 || stops === 3
                         }
-                        if (one && two && three){
+                        if (one && two && three) {
                             return stops === 1 || stops === 2 || stops === 3
                         }
-                        if(without && one){
+                        if (without && one) {
                             return stops === 0 || stops === 1
                         }
-                        if(without && two){
+                        if (without && two) {
                             return stops === 0 || stops === 2
                         }
-                        if(without && three){
+                        if (without && three) {
                             return stops === 0 || stops === 3
                         }
-                        if(one && two){
+                        if (one && two) {
                             return stops === 1 || stops === 2
                         }
-                        if(one && three){
+                        if (one && three) {
                             return stops === 1 || stops === 3
                         }
-                        if(two && three){
+                        if (two && three) {
                             return stops === 2 || stops === 3
                         }
-                        if(without) {
+                        if (without) {
                             return stops === 0
                         }
-                        if(one) {
+                        if (one) {
                             return stops === 1
                         }
-                        if(two) {
+                        if (two) {
                             return stops === 2
                         }
-                        if(three) {
+                        if (three) {
                             return stops === 3
                         }
                     }).sort(function (a, b) {
@@ -89,7 +103,7 @@ function App() {
                     }).map(({price, carrier, segments}) => <Ticket price={price}
                                                                    carrier={carrier}
                                                                    segments={segments}
-                                                                   key={price + carrier}
+                                                                   key={uuidv4()}
                     />) : <div>...Loading</div>}
                 </div>
             </div>
