@@ -17,6 +17,7 @@ import {v4 as uuidv4} from "uuid"
 
 function App() {
     const [checkAll, setCheckAll] = useState(false);
+    const [ticketsCount, setTicketsCount] = useState(5)
     const {
         ticketId,
         stop,
@@ -104,7 +105,10 @@ function App() {
                                                                    carrier={carrier}
                                                                    segments={segments}
                                                                    key={uuidv4()}
-                    />) : <div>...Loading</div>}
+                    />).filter((el, i)=>{
+                        return i < ticketsCount ? true : false
+                    }) : <div>...Loading</div>}
+                    <button onClick={()=>{setTicketsCount(prevState => prevState + 5)}}>add 5 tickets</button>
                 </div>
             </div>
 
